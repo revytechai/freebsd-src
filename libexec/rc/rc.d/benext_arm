@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# PROVIDE: benext_arm
+# REQUIRE: zfs
+# BEFORE: FILESYSTEMS
+# KEYWORD: nojail
+#
+# Early in boot: arm a one-shot fallback to the protected BE, so a hard
+# failure of this boot lands on the protected BE next time.  See benext(8).
+
+. /etc/rc.subr
+
+name=benext_arm
+rcvar=benext_enable
+start_cmd="${name}_start"
+stop_cmd=":"
+
+benext_arm_start()
+{
+	/usr/sbin/benext boot-arm
+}
+
+load_rc_config benext
+: ${benext_enable:="NO"}
+run_rc_command "$1"

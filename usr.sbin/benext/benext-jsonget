@@ -1,0 +1,27 @@
+#!/usr/libexec/flua
+-- benext-jsonget FILE KEY | FILE --validate   (strict JSON via base libucl)
+-- SPDX-License-Identifier: BSD-2-Clause
+local ucl = require("ucl")
+local f, k = arg[1], arg[2]
+local h = io.open(f, "r")
+if not h then io.stderr:write(f .. ": cannot open\n") os.exit(1) end
+local txt = h:read("a") h:close()
+local p = ucl.parser()
+local ok, err = p:parse_string(txt, "json")
+if not ok then io.stderr:write(f .. ": not valid JSON: " .. tostring(err) .. "\n") os.exit(1) end
+local o = p:get_object()
+local schema = { checks_dir = "string", keep = "number", reboot_cmd = "string" }
+if type(o) ~= "table" then io.stderr:write(f .. ": top level must be an object\n") os.exit(1) end
+if k == "--validate" then
+	local bad = false
+	for key, v in pairs(o) do
+		if not schema[key] then io.stderr:write(f .. ": unknown key \"" .. key .. "\"\n") bad = true
+		elseif type(v) ~= schema[key] then io.stderr:write(f .. ": key \"" .. key .. "\" must be a " .. schema[key] .. "\n") bad = true end
+	end
+	if type(o.keep) == "number" and (o.keep < 0 or o.keep > 50 or o.keep ~= math.floor(o.keep)) then
+		io.stderr:write(f .. ": keep must be an integer 0-50\n") bad = true end
+	if type(o.checks_dir) == "string" and o.checks_dir:sub(1, 1) ~= "/" then
+		io.stderr:write(f .. ": checks_dir must be an absolute path\n") bad = true end
+	os.exit(bad and 1 or 0)
+end
+if o[k] ~= nil then print(o[k]) end

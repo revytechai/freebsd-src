@@ -1,0 +1,110 @@
+.\" SPDX-License-Identifier: BSD-2-Clause
+.Dd October 30, 2026
+.Dt BENEXT 8
+.Os
+.Sh NAME
+.Nm benext
+.Nd one-shot boot environment trials with fallback to a protected boot environment
+.Sh SYNOPSIS
+.Nm
+.Cm protect Ar be
+.Nm
+.Cm try Ar be
+.Nm
+.Cm abort
+.Nm
+.Cm boot-arm
+.Nm
+.Cm confirm
+.Nm
+.Cm status Op Fl -json
+.Nm
+.Cm destroy Ar be
+.Nm
+.Cm rename Ar old new
+.Nm
+.Cm mount-rw Ar be dir
+.Nm
+.Cm prune Op Ar keep
+.Nm
+.Fl -check-config Op Ar file
+.Sh DESCRIPTION
+.Nm
+boots a new boot environment once and falls back automatically.
+The fallback order is: the one-shot trial, then the last good boot
+environment, then the protected boot environment.
+.Bl -tag -width "check-config"
+.It Cm protect Ar be
+Mark
+.Ar be
+as the protected boot environment
+.Pq Va org.cloudbsd:protected=on .
+Only one may be protected.
+It cannot be destroyed, renamed, mounted read-write, tried, or pruned
+through
+.Nm .
+.It Cm try Ar be
+Record the current
+.Va bootfs
+as the last good boot environment, arm panic power-cycle in the running
+system and in
+.Ar be ,
+and activate
+.Ar be
+for one boot with
+.Nm bectl Cm activate Fl t .
+Aborts if
+.Va bootfs
+changed.
+.It Cm abort
+Cancel a pending trial.
+.It Cm boot-arm
+Run early in boot by
+.Pa rc.d/benext_arm .
+Activates the protected boot environment for one boot, so a hard failure
+of the current boot lands on it.
+.It Cm confirm
+Run late in boot by
+.Pa rc.d/benext_confirm .
+Runs the executable health checks in
+.Va checks_dir .
+On success, disarms and makes a trial permanent.
+On failure, reboots to the fallback.
+.It Cm status Op Fl -json
+Print the state in human-readable form or JSON.
+.It Cm prune Op Ar keep
+Destroy old boot environments, keeping the original, active, next-boot,
+last good, trial, and protected ones plus the newest
+.Ar keep .
+.It Fl -check-config Op Ar file
+Validate the configuration; exit 0 if valid, 4 with a message if not.
+.El
+.Sh FILES
+.Bl -tag -width indent
+.It Pa /etc/benext/config.json
+Configuration, see
+.Xr benext.json 5 .
+.It Pa /etc/benext.d/
+Default health-check directory.
+.It Pa /etc/rc.d/benext_arm , Pa /etc/rc.d/benext_confirm
+Boot hooks, enabled with
+.Va benext_enable="YES"
+in
+.Xr rc.conf 5 .
+.El
+.Sh EXIT STATUS
+0 on success, 2 for a bad argument or state, 3 when the protected boot
+environment is refused, 4 for a configuration error, 5 when
+.Va bootfs
+changed during
+.Cm try ,
+64 for a usage error.
+.Sh SEE ALSO
+.Xr benext.json 5 ,
+.Xr loader.conf 5 ,
+.Xr bectl 8 ,
+.Xr zfsbootcfg 8
+.Sh BUGS
+A hard failure of the last good boot environment before
+.Pa rc.d/benext_arm
+runs cannot reach the protected boot environment without loader support.

@@ -1,0 +1,36 @@
+PASS t_try_sets_props_and_oneshot
+PASS t_try_arms_panic_reboot
+PASS t_try_keeps_bootfs
+PASS t_try_refuses_missing
+PASS t_try_refuses_protected
+PASS t_try_refuses_pending
+PASS t_abort_clears_trial
+PASS t_confirm_pass_promotes_trial
+PASS t_confirm_pass_nontrial_noop
+PASS t_confirm_fail_trial_reboots_to_lastgood
+PASS t_boot_arm_sets_oneshot_to_protected
+PASS t_boot_arm_no_protected
+PASS t_boot_arm_on_trial_does_not_rearm
+PASS t_confirm_pass_disarms
+PASS t_chain_trial_and_lastgood_fail_lands_on_protected
+PASS t_protect_only_one
+PASS t_protect_missing
+PASS t_destroy_protected_refused
+PASS t_destroy_unprotected_passes
+PASS t_rename_protected_refused
+PASS t_rename_unprotected_passes
+PASS t_mountrw_protected_refused
+PASS t_mountrw_unprotected_passes
+PASS t_prune_keeps_protected_and_lastgood
+PASS t_prune_default_keep_from_config
+PASS t_status_output
+PASS t_status_json
+PASS t_check_config_valid
+PASS t_check_config_invalid
+PASS t_check_config_missing
+PASS t_config_unreadable_key
+PASS t_config_absent_uses_defaults
+PASS t_pool_override
+PASS t_usage
+== 34 passed, 0 failed
+benext line coverage: 127/127 = 100%

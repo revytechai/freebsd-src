@@ -1,6 +1,7 @@
 .include <src.opts.mk>
 
 SUBDIR=	adduser \
+	benext \
 	arp \
 	binmiscctl \
 	boottrace \

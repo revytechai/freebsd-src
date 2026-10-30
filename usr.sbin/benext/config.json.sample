@@ -1,0 +1,5 @@
+{
+  "checks_dir": "/etc/benext.d",
+  "keep": 3,
+  "reboot_cmd": "shutdown -r now"
+}

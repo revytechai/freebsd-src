@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="mandoc.css" type="text/css" media="all"/>
+  <title>BENEXT.JSON(5)</title>
+</head>
+<!-- This is an automatically generated file.  Do not edit.
+   SPDX-License-Identifier: BSD-2-Clause
+ -->
+<body>
+<div class="head" role="doc-pageheader" aria-label="Manual header
+  line"><span class="head-ltitle">BENEXT.JSON(5)</span>
+  <span class="head-vol">FreeBSD File Formats Manual</span>
+  <span class="head-rtitle">BENEXT.JSON(5)</span></div>
+<main class="manual-text">
+<section class="Sh">
+<h2 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h2>
+<p class="Pp"><code class="Nm">benext.json</code> &#x2014;
+    <span class="Nd" role="doc-subtitle">benext configuration file</span></p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h2>
+<p class="Pp">Strict JSON (RFC 8259) object. Unknown keys are errors.</p>
+<dl class="Bl-tag">
+  <dt id="checks_dir"><var class="Va">checks_dir</var></dt>
+  <dd>Absolute path of the health-check directory. Default
+      <span class="Pa">/etc/benext.d</span>.</dd>
+  <dt id="keep"><var class="Va">keep</var></dt>
+  <dd>Integer 0&#x2013;50: fallback boot environments kept by
+      <code class="Cm">prune</code>. Default 3.</dd>
+  <dt id="reboot_cmd"><var class="Va">reboot_cmd</var></dt>
+  <dd>Command run when a boot is unhealthy. Default &#x201C;shutdown -r
+      now&#x201D;.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="FILES"><a class="permalink" href="#FILES">FILES</a></h2>
+<p class="Pp"><span class="Pa">/etc/benext/config.json</span></p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h2>
+<p class="Pp"><a class="Xr" aria-label="benext, section 8">benext(8)</a></p>
+</section>
+</main>
+<div class="foot" role="doc-pagefooter" aria-label="Manual footer
+  line"><span class="foot-left">FreeBSD 16.0-CURRENT</span>
+  <span class="foot-date">October 30, 2026</span>
+  <span class="foot-right">BENEXT.JSON(5)</span></div>
+</body>
+</html>

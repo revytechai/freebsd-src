@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# PROVIDE: benext_confirm
+# REQUIRE: LOGIN
+# KEYWORD: nojail
+#
+# Late in boot: run the health checks; make a healthy trial BE permanent,
+# or reboot to the fallback.  See benext(8).
+
+. /etc/rc.subr
+
+name=benext_confirm
+rcvar=benext_enable
+start_cmd="${name}_start"
+stop_cmd=":"
+extra_commands="checkconfig"
+checkconfig_cmd="/usr/sbin/benext --check-config"
+start_precmd="/usr/sbin/benext --check-config"
+
+benext_confirm_start()
+{
+	/usr/sbin/benext confirm
+}
+
+load_rc_config benext
+: ${benext_enable:="NO"}
+run_rc_command "$1"

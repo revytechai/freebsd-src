@@ -12,6 +12,8 @@ CONFS=	DAEMON \
 	SERVERS \
 	adjkerntz \
 	backlight \
+	benext_arm \
+	benext_confirm \
 	bgfsck \
 	bridge \
 	cfumass \

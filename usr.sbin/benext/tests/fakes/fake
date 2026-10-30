@@ -1,0 +1,41 @@
+#!/bin/sh
+# Fake bectl/zfs/zpool/sysctl/jsonget keeping state in $FAKE.  Dispatch on $0 name.
+set -eu
+S=$FAKE; me=${0##*/}; echo "$me $*" >> "$S/calls"
+R=zroot/ROOT
+pf() { echo "$S/props/$(echo "$1" | tr / %)"; }
+case "$me" in
+zfs)
+	case "$1" in
+	list) d=$5
+		if [ "$d" = / ]; then echo "$R/$(cat "$S/booted")"; exit 0; fi
+		grep -qx "${d#$R/}" "$S/bes" && echo "$d" && exit 0; exit 1 ;;
+	get) k=${5#*:}; f="$(pf "$6")/$k"; [ -f "$f" ] && cat "$f" || echo - ;;
+	set) kv=${2#*:}; mkdir -p "$(pf "$3")"; echo "${kv#*=}" > "$(pf "$3")/${kv%%=*}" ;;
+	esac ;;
+zpool) echo "$R/$(cat "$S/bootfs")" ;;
+sysctl) echo "$*" >> "$S/sysctl" ;;
+jsonget) if [ "$2" = --validate ]; then python3 -c '
+import json,sys
+o=json.load(open(sys.argv[1]))
+s={"checks_dir":str,"keep":int,"reboot_cmd":str}
+bad=[k for k in o if k not in s or not isinstance(o[k],s[k])]
+[print(sys.argv[1]+": bad key "+k,file=sys.stderr) for k in bad]
+sys.exit(1 if bad else 0)' "$1"; else python3 -c '
+import json,sys
+o=json.load(open(sys.argv[1])); v=o.get(sys.argv[2])
+v is not None and print(v)' "$1" "$2"; fi ;;
+bectl)
+	case "$1" in
+	list) b=$(cat "$S/booted"); r=$(cat "$S/bootfs"); t=$(cat "$S/bootonce" 2>/dev/null || :)
+		while read -r n; do f=; [ "$n" = "$b" ] && f=${f}N; [ "$n" = "$r" ] && f=${f}R; [ "$n" = "$t" ] && f=${f}T; printf '%s\t%s\t-\t1M\t2026\n' "$n" "${f:--}"; done < "$S/bes" ;;
+	activate) case "$2" in
+		-t) echo "$3" > "$S/bootonce"; [ -f "$S/activate_breaks_bootfs" ] && echo "$3" > "$S/bootfs"; : ;;
+		-T) rm -f "$S/bootonce" ;;
+		*) echo "$2" > "$S/bootfs" ;; esac ;;
+	mount) mkdir -p "$3/etc"; echo "$2" > "$S/mounted" ;;
+	umount) rm -f "$S/mounted"; for d in /tmp/*/benext.* "$S"/benext.*; do [ -d "$d" ] && rm -rf "$d"/*; done; : ;;
+	destroy) be=$2; [ "$be" = -o ] && be=$3; grep -vx "$be" "$S/bes" > "$S/bes.n" || :; mv "$S/bes.n" "$S/bes" ;;
+	rename) sed "s/^$2\$/$3/" "$S/bes" > "$S/bes.n"; mv "$S/bes.n" "$S/bes" ;;
+	esac ;;
+esac

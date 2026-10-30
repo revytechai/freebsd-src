@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="mandoc.css" type="text/css" media="all"/>
+  <title>BENEXT(8)</title>
+</head>
+<!-- This is an automatically generated file.  Do not edit.
+   SPDX-License-Identifier: BSD-2-Clause
+ -->
+<body>
+<div class="head" role="doc-pageheader" aria-label="Manual header
+  line"><span class="head-ltitle">BENEXT(8)</span>
+  <span class="head-vol">FreeBSD System Manager's Manual</span>
+  <span class="head-rtitle">BENEXT(8)</span></div>
+<main class="manual-text">
+<section class="Sh">
+<h2 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h2>
+<p class="Pp"><code class="Nm">benext</code> &#x2014;
+    <span class="Nd" role="doc-subtitle">one-shot boot environment trials with
+    fallback to a protected boot environment</span></p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h2>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">protect</code> <var class="Ar">be</var></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">try</code> <var class="Ar">be</var></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">abort</code></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">boot-arm</code></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">confirm</code></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">status</code> [<code class="Fl">--json</code>]</td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">destroy</code> <var class="Ar">be</var></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">rename</code> <var class="Ar">old new</var></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">mount-rw</code> <var class="Ar">be dir</var></td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Cm">prune</code> [<var class="Ar">keep</var>]</td>
+  </tr>
+</table>
+<br/>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">benext</code></td>
+    <td><code class="Fl">--check-config</code> [<var class="Ar">file</var>]</td>
+  </tr>
+</table>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h2>
+<p class="Pp"><code class="Nm">benext</code> boots a new boot environment once
+    and falls back automatically. The fallback order is: the one-shot trial,
+    then the last good boot environment, then the protected boot
+  environment.</p>
+<dl class="Bl-tag">
+  <dt id="protect"><a class="permalink" href="#protect"><code class="Cm">protect</code></a>
+    <var class="Ar">be</var></dt>
+  <dd>Mark <var class="Ar">be</var> as the protected boot environment
+      (<var class="Va">org.cloudbsd:protected=on</var>). Only one may be
+      protected. It cannot be destroyed, renamed, mounted read-write, tried, or
+      pruned through <code class="Nm">benext</code>.</dd>
+  <dt id="try"><a class="permalink" href="#try"><code class="Cm">try</code></a>
+    <var class="Ar">be</var></dt>
+  <dd>Record the current <var class="Va">bootfs</var> as the last good boot
+      environment, arm panic power-cycle in the running system and in
+      <var class="Ar">be</var>, and activate <var class="Ar">be</var> for one
+      boot with <code class="Nm">bectl</code> <code class="Cm">activate</code>
+      <code class="Fl">-t</code>. Aborts if <var class="Va">bootfs</var>
+      changed.</dd>
+  <dt id="abort"><a class="permalink" href="#abort"><code class="Cm">abort</code></a></dt>
+  <dd>Cancel a pending trial.</dd>
+  <dt id="boot-arm"><a class="permalink" href="#boot-arm"><code class="Cm">boot-arm</code></a></dt>
+  <dd>Run early in boot by <span class="Pa">rc.d/benext_arm</span>. Activates
+      the protected boot environment for one boot, so a hard failure of the
+      current boot lands on it.</dd>
+  <dt id="confirm"><a class="permalink" href="#confirm"><code class="Cm">confirm</code></a></dt>
+  <dd>Run late in boot by <span class="Pa">rc.d/benext_confirm</span>. Runs the
+      executable health checks in <var class="Va">checks_dir</var>. On success,
+      disarms and makes a trial permanent. On failure, reboots to the
+    fallback.</dd>
+  <dt id="status"><a class="permalink" href="#status"><code class="Cm">status</code></a>
+    [<code class="Fl">--json</code>]</dt>
+  <dd>Print the state in human-readable form or JSON.</dd>
+  <dt id="prune"><a class="permalink" href="#prune"><code class="Cm">prune</code></a>
+    [<var class="Ar">keep</var>]</dt>
+  <dd>Destroy old boot environments, keeping the original, active, next-boot,
+      last good, trial, and protected ones plus the newest
+      <var class="Ar">keep</var>.</dd>
+  <dt id="check-config"><a class="permalink" href="#check-config"><code class="Fl">--check-config</code></a>
+    [<var class="Ar">file</var>]</dt>
+  <dd>Validate the configuration; exit 0 if valid, 4 with a message if not.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="FILES"><a class="permalink" href="#FILES">FILES</a></h2>
+<dl class="Bl-tag">
+  <dt><span class="Pa">/etc/benext/config.json</span></dt>
+  <dd>Configuration, see <a class="Xr" aria-label="benext.json, section
+      5">benext.json(5)</a>.</dd>
+  <dt><span class="Pa">/etc/benext.d/</span></dt>
+  <dd>Default health-check directory.</dd>
+  <dt><span class="Pa">/etc/rc.d/benext_arm</span>,
+    <span class="Pa">/etc/rc.d/benext_confirm</span></dt>
+  <dd>Boot hooks, enabled with
+      <var class="Va">benext_enable=&quot;YES&quot;</var> in
+      <a class="Xr" aria-label="rc.conf, section 5">rc.conf(5)</a>.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="EXIT_STATUS"><a class="permalink" href="#EXIT_STATUS">EXIT
+  STATUS</a></h2>
+<p class="Pp">0 on success, 2 for a bad argument or state, 3 when the protected
+    boot environment is refused, 4 for a configuration error, 5 when
+    <var class="Va">bootfs</var> changed during <code class="Cm">try</code>, 64
+    for a usage error.</p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h2>
+<p class="Pp"><a class="Xr" aria-label="benext.json, section
+    5">benext.json(5)</a>, <a class="Xr" aria-label="loader.conf, section
+    5">loader.conf(5)</a>, <a class="Xr" aria-label="bectl, section
+    8">bectl(8)</a>, <a class="Xr" aria-label="zfsbootcfg, section
+    8">zfsbootcfg(8)</a></p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="BUGS"><a class="permalink" href="#BUGS">BUGS</a></h2>
+<p class="Pp">A hard failure of the last good boot environment before
+    <span class="Pa">rc.d/benext_arm</span> runs cannot reach the protected boot
+    environment without loader support.</p>
+</section>
+</main>
+<div class="foot" role="doc-pagefooter" aria-label="Manual footer
+  line"><span class="foot-left">FreeBSD 16.0-CURRENT</span>
+  <span class="foot-date">October 30, 2026</span>
+  <span class="foot-right">BENEXT(8)</span></div>
+</body>
+</html>

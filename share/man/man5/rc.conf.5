@@ -2261,6 +2261,20 @@ will be run with the
 .Fl y
 flag if the initial preen
 of the file systems fails.
+.It Va benext_enable
+.Pq Vt bool
+Set to
+.Dq Li YES
+to enable one-shot boot environment trials with automatic fallback.
+.Pa rc.d/benext_arm
+runs early in boot and arms a one-shot fallback to the protected boot
+environment
+.Pq Li org.cloudbsd:protected=on ;
+.Pa rc.d/benext_confirm
+runs late in boot, executes the health checks and either confirms the
+trial boot environment or reboots to the last good one.
+See
+.Xr benext 8 .
 .It Va background_fsck
 .Pq Vt bool
 If set to

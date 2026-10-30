@@ -1,0 +1,28 @@
+.\" SPDX-License-Identifier: BSD-2-Clause
+.Dd October 30, 2026
+.Dt BENEXT.JSON 5
+.Os
+.Sh NAME
+.Nm benext.json
+.Nd benext configuration file
+.Sh DESCRIPTION
+Strict JSON (RFC 8259) object.
+Unknown keys are errors.
+.Bl -tag -width "reboot_cmd"
+.It Va checks_dir
+Absolute path of the health-check directory.
+Default
+.Pa /etc/benext.d .
+.It Va keep
+Integer 0\(en50: fallback boot environments kept by
+.Cm prune .
+Default 3.
+.It Va reboot_cmd
+Command run when a boot is unhealthy.
+Default
+.Dq shutdown -r now .
+.El
+.Sh FILES
+.Pa /etc/benext/config.json
+.Sh SEE ALSO
+.Xr benext 8

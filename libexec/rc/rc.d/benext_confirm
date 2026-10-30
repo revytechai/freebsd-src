@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # PROVIDE: benext_confirm
-# REQUIRE: LOGIN
+# REQUIRE: LOGIN sshd cron
 # KEYWORD: nojail
 #
 # Late in boot: run the health checks; make a healthy trial BE permanent,
@@ -14,12 +14,12 @@ rcvar=benext_enable
 start_cmd="${name}_start"
 stop_cmd=":"
 extra_commands="checkconfig"
-checkconfig_cmd="/usr/sbin/benext --check-config"
-start_precmd="/usr/sbin/benext --check-config"
+checkconfig_cmd="/usr/local/sbin/benext --check-config"
+start_precmd="/usr/local/sbin/benext --check-config"
 
 benext_confirm_start()
 {
-	/usr/sbin/benext confirm
+	/usr/local/sbin/benext confirm
 }
 
 load_rc_config benext
